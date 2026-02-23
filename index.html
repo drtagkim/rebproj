@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REB 데이터 거버넌스 자가평가</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        :root {
+            --primary: #1e3a8a;
+            --primary-hover: #1e40af;
+            --secondary: #3b82f6;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .logo-img {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Info Card */
+        .info-card {
+            background-color: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2.5rem;
+            border-top: 4px solid var(--primary);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .info-card h2 {
+            margin-top: 0;
+            font-size: 1.25rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .criteria-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .criteria-table th,
+        .criteria-table td {
+            text-align: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .criteria-table th {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .criteria-table td:last-child {
+            text-align: left;
+        }
+
+        /* Questionnaire Sections */
+        .section-card {
+            background-color: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .section-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            font-size: 1.35rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .question-block {
+            margin-bottom: 1.5rem;
+        }
+
+        .question-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+
+        .options-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+            background-color: #fafafa;
+        }
+
+        .option-label:hover {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .option-label input {
+            display: none;
+        }
+
+        .option-label.selected {
+            background-color: #eff6ff;
+            border-color: var(--secondary);
+            color: var(--primary);
+            font-weight: 600;
+            box-shadow: inset 0 0 0 1px var(--secondary);
+        }
+
+        .option-text {
+            margin-left: 0.25rem;
+        }
+
+        /* Floating Compute Button */
+        .action-container {
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .btn-submit {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Result Modal */
+        .result-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .result-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .result-card {
+            background: var(--surface);
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .result-overlay.active .result-card {
+            transform: scale(1);
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            border: 8px solid var(--border-color);
+        }
+
+        .score-val {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .score-max {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .grade {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .grade-msg {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            word-break: keep-all;
+        }
+
+        .btn-close {
+            background-color: var(--surface);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.75rem 2rem;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-close:hover {
+            background-color: #f1f5f9;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: sticky;
+            top: 0;
+            background: var(--surface);
+            padding: 1rem 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar-bg {
+            max-width: 900px;
+            margin: 0 auto;
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            padding: 0 1.5rem;
+            box-sizing: border-box;
+            background-clip: content-box;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--secondary);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        /* ===== 반응형 디자인 - 모바일 ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .subtitle {
+                font-size: 0.95rem;
+            }
+
+            .logo-img {
+                max-width: 140px;
+            }
+
+            .info-card {
+                padding: 1.25rem;
+            }
+
+            .info-card h2 {
+                font-size: 1.1rem;
+            }
+
+            .criteria-table {
+                font-size: 0.8rem;
+            }
+
+            .criteria-table th,
+            .criteria-table td {
+                padding: 0.5rem 0.3rem;
+            }
+
+            .section-card {
+                padding: 1.25rem;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+            }
+
+            .question-text {
+                font-size: 0.95rem;
+            }
+
+            .options-group {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .option-label {
+                padding: 0.6rem 1rem;
+                justify-content: flex-start;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .btn-submit {
+                padding: 0.85rem 2rem;
+                font-size: 1.1rem;
+            }
+
+            .result-card {
+                padding: 1.5rem;
+            }
+
+            .score-circle {
+                width: 120px;
+                height: 120px;
+            }
+
+            .score-val {
+                font-size: 2.25rem;
+            }
+
+            .grade {
+                font-size: 1.25rem;
+            }
+
+            .grade-msg {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.3rem;
+            }
+
+            .criteria-table {
+                font-size: 0.72rem;
+            }
+
+            .criteria-table th:nth-child(4),
+            .criteria-table td:nth-child(4) {
+                display: none;
+            }
+
+            .question-text {
+                font-size: 0.88rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="progress-container">
+        <div class="progress-bar-bg">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <img class="logo-img"
+                src="data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAABPAAD/4QMvaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjYtYzA2NyA3OS4xNTc3NDcsIDIwMTUvMDMvMzAtMjM6NDA6NDIgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDQyAyMDE1IChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowRTE4QjZBRkY5M0YxMUVFOTQ5NkQ3N0VFQzQyMjA1NCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowRTE4QjZCMEY5M0YxMUVFOTQ5NkQ3N0VFQzQyMjA1NCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjBFMThCNkFERjkzRjExRUU5NDk2RDc3RUVDNDIyMDU0IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBFMThCNkFFRjkzRjExRUU5NDk2RDc3RUVDNDIyMDU0Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+/+4ADkFkb2JlAGTAAAAAAf/bAIQAAwICAgICAwICAwQCAgIE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"
+                alt="KMIS 로고">
+            <h1>REB 데이터 거버넌스 자가평가</h1>
+            <p class="subtitle">우리 기관의 데이터 거버넌스 체계 성숙도를 8개 구성요소를 통해 진단합니다.</p>
+        </header>
+
+        <div class="info-card">
+            <h2>📋 평가 안내 및 기준</h2>
+            <p style="color:var(--text-muted); margin-bottom: 1rem;">각 문항에 대해 우리 기관의 현재 상황에 가장 알맞은 상태를 선택해 주시기 바랍니다.</p>
+            <ul style="margin-bottom: 1.5rem; color:var(--text-main);">
+                <li><strong>2점 (적정)</strong> : 관련 정책·지침이 문서화되어 있으며, 실제로 활발히 이행·운영됨</li>
+                <li><strong>1점 (낮음)</strong> : 필요성은 인식하고 있으나, 규정이 미흡하거나 부분적으로만 이행됨</li>
+                <li><strong>0점 (없음)</strong> : 관련 인식 및 규정이 전혀 없거나 공식적인 운영이 이루어지지 않음</li>
+            </ul>
+            <p>평가를 모두 마치면 스스로 합산을 내보시거나 하단의 <strong>결과보기</strong> 버튼을 통해 총점(80점 만점) 및 평가 등급을 확인할 수 있습니다.</p>
+
+            <table class="criteria-table">
+                <thead>
+                    <tr>
+                        <th>총점 범위</th>
+                        <th>환산 비율</th>
+                        <th>평가 등급</th>
+                        <th>진단 결과 및 시사점</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>64점 ~ 80점</strong></td>
+                        <td>80% 이상</td>
+                        <td style="color:var(--primary); font-weight:bold;">A (최우수)</td>
+                        <td>데이터 거버넌스 체계가 완숙 단계로 전사적으로 안정적 운영 중입니다.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>48점 ~ 63점</strong></td>
+                        <td>60% 이상</td>
+                        <td style="color:var(--secondary); font-weight:bold;">B (우수)</td>
+                        <td>양호한 체계를 갖추었으나 특정 영역에 대한 개선 및 모니터링이 필요합니다.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>32점 ~ 47점</strong></td>
+                        <td>40% 이상</td>
+                        <td style="color:var(--warning); font-weight:bold;">C (보통)</td>
+                        <td>기본적인 정책은 있으나 전사적 확산과 실질적 통제력이 부족하여 개선이 요구됩니다.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>0점 ~ 31점</strong></td>
+                        <td>40% 미만</td>
+                        <td style="color:var(--error); font-weight:bold;">D (미흡)</td>
+                        <td>거버넌스 체계가 부재하거나 작동하지 않고 있습니다. 전면적인 체계 설계가 시급합니다.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <form id="quizForm">
+            <!-- JS will inject sections here -->
+        </form>
+
+        <div class="action-container">
+            <button type="button" class="btn-submit" onclick="calculateScore()">결과 보기</button>
+        </div>
+    </div>
+
+    <!-- Result Overlay -->
+    <div class="result-overlay" id="resultOverlay">
+        <div class="result-card">
+            <div class="score-circle" id="scoreCircle">
+                <div class="score-val" id="scoreVal">0</div>
+                <div class="score-max">/ 80점</div>
+            </div>
+            <div class="grade" id="gradeLabel">평가 등급: A</div>
+            <div class="grade-msg" id="gradeMsg">결과 시사점</div>
+            <button class="btn-close" onclick="closeModal()">닫기</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                title: "1. 데이터 정책 (Data Policy)",
+                questions: [
+                    "1. 데이터의 수집, 보관, 활용, 폐기 등에 대한 전반적인 기준과 원칙이 문서화되어 있습니까?",
+                    "2. 수립된 데이터 정책이 법적 규제 및 지침을 준수하도록 정기적으로 검토 및 업데이트되고 있습니까?",
+                    "3. 조직 내 구성원들이 데이터의 무분별한 활용을 방지하기 위한 데이터 운영 정책을 숙지하고 있습니까?",
+                    "4. 데이터 정책이 부서 간에 일관되게 적용되고 운영 문화를 정착시키는 데 기여하고 있습니까?",
+                    "5. 조직의 데이터 자산이 효율적이고 안전하게 활용될 수 있도록 정책적 지원 시스템이 존재합니까?"
+                ]
+            },
+            {
+                title: "2. 데이터 표준 (Data Standard)",
+                questions: [
+                    "6. 데이터 명칭, 데이터 형식, 단위 등 기술적 요소가 전사적으로 통일되어 관리되고 있습니까?",
+                    "7. 시스템 또는 부서 간 데이터 공유 및 연계 시 발생할 수 있는 혼란을 방지하기 위한 표준 지침이 존재합니까?",
+                    "8. 데이터의 정확성과 시스템 간 연계를 높이기 위해 데이터 표준이 지속적으로 관리되고 있습니까?",
+                    "9. 전사 공통으로 사용할 수 있는 데이터 사전(Data Dictionary)이나 용어집이 문서화되어 접근 가능합니까?",
+                    "10. 새로운 시스템을 도입하거나 외부 기관과 연계할 때 데이터 표준이 우선적인 설계 기준으로 적용됩니까?"
+                ]
+            },
+            {
+                title: "3. 역할 및 책임 (Roles & Responsibilities)",
+                questions: [
+                    "11. 데이터 소유자, 데이터 관리자, 데이터 사용자의 권한과 책임이 명확히 정의되고 분류되어 있습니까?",
+                    "12. 데이터와 관련된 품질, 보안 등 문제가 발생했을 때 책임 소재를 명확히 파악할 수 있는 체계입니까?",
+                    "13. 데이터에 대한 접근 및 통제 권한이 목적에 맞게 부여되며, 권한의 충돌이나 누락이 방지되고 있습니까?",
+                    "14. 데이터를 통제하고 협업 효율성을 높이기 위한 관련자 및 이해관계자 간의 커뮤니케이션 체계가 있습니까?",
+                    "15. 구성원의 역할과 책임 분리에 대해 지속적인 교육 및 안내가 이루어지고 있습니까?"
+                ]
+            },
+            {
+                title: "4. 메타데이터 관리 (Metadata Management)",
+                questions: [
+                    "16. 데이터의 의미와 출처를 명확히 하기 위해 각 데이터 항목에 대한 정의(Definition)가 구성되어 있습니까?",
+                    "17. 데이터의 물리적, 논리적 구조와 형식(Format) 등에 대한 정보가 정확하고 최신 상태로 유지되고 있습니까?",
+                    "18. 데이터의 생성 시점, 수정 이력, 출처(Lineage) 등 라이프사이클 전반에 걸친 설명 정보가 관리됩니까?",
+                    "19. 메타데이터를 확인하여 데이터 접근 권한을 판단하고 재사용할 수 있는 검색 환경이 마련되어 있습니까?",
+                    "20. 사용자가 필요한 데이터 구조를 쉽게 이해하고 해석력을 높일 수 있는 메타데이터 저장 시스템이 있습니까?"
+                ]
+            },
+            {
+                title: "5. 데이터 품질 관리 (Data Quality Management)",
+                questions: [
+                    "21. 데이터의 신뢰성을 위해 정확성, 일관성, 완전성, 적시성, 유효성 등에 대한 기준이 정의되어 있습니까?",
+                    "22. 데이터 입력이나 연계 과정에서 주기적으로 오류를 탐지하는 데이터 품질 점검(Profiling)을 수행하고 있습니까?",
+                    "23. 지속적인 모니터링을 통해 발견된 데이터 품질 문제를 근본적으로 개선하기 위한 피드백 프로세스가 있습니까?",
+                    "24. 의사결정과 분석에 필수적인 핵심 데이터(Core Data)에 대해 더 엄격한 품질 점검이 이루어지고 있습니까?",
+                    "25. 데이터 품질 관리 활동과 측정된 결과가 경영진(책임자) 등에게 주기적으로 보고되고 있습니까?"
+                ]
+            },
+            {
+                title: "6. 보안 및 개인정보 보호 (Security & Privacy)",
+                questions: [
+                    "26. 데이터 접근 통제 및 권한 관리 정책이 수립되어 임직원의 비인가 접근 및 무단 활용이 방지되고 있습니까?",
+                    "27. 개인정보 등 민감 데이터의 활용 시 법적 기준에 부합하게 익명화, 비식별화 조치가 철저히 이루어집니까?",
+                    "28. 데이터가 저장되고 전송되는 모든 과정에서 데이터를 보호하기 위한 보안 시스템(암호화 등)이 구축되어 있습니까?",
+                    "29. 데이터 보호 의무와 규제(법적 등)를 준수하고 리스크를 최소화하기 위한 법률 기반 정책 검토가 이루어집니까?",
+                    "30. 침해 사고 및 유출 사고를 방지하여 대내외적인 고객/시민의 신뢰를 확보할 수 있는 예방 체계가 마련되어 있습니까?"
+                ]
+            },
+            {
+                title: "7. 데이터 아키텍처 (Data Architecture)",
+                questions: [
+                    "31. 데이터 저장 공간, 흐름, 연계 방식이 전사적 아키텍처 관점에서 정의되고 통합 인프라를 제공합니까?",
+                    "32. 부서 간 데이터 단절을 해소하고 중복 입력을 최소화하기 위한 데이터 연동 구조가 원활히 작동합니까?",
+                    "33. 신규 업무 요건이나 보유 데이터가 증가할 때 유연하게 담을 수 있는 스토리지 및 확장 가능한 인프라 규격이 있습니까?",
+                    "34. 필요한 데이터를 더욱 빠르고 안전하게 주고받을 수 있도록 데이터 연계 인터페이스 체계가 정리되어 있습니까?",
+                    "35. 현행 시스템 간의 데이터 흐름(Data Flow) 청사진이 문서화되어 데이터 통합 프로젝트 시 기준으로 사용됩니까?"
+                ]
+            },
+            {
+                title: "8. 모니터링 및 감사 (Monitoring & Audit)",
+                questions: [
+                    "36. 조직 내 데이터 거버넌스 체계 전반이 절차에 따라 제대로 작동하고 있는지 점검하고 평가하는 조직이나 절차가 있습니까?",
+                    "37. 실행력 확보 및 증적 관리를 위해 사용자 접속 로그 및 데이터 변경 이력이 상시 기록되고 보존됩니까?",
+                    "38. 데이터 조작 위반이나 비정상적인 대량 조회 등 이상 징후에 대해 즉각적으로 알려주는 경고 시스템이 존재합니까?",
+                    "39. 내·외부의 규제 대응을 목적으로 거버넌스 및 시스템에 대한 정기적인 감사가 수행되고 있습니까?",
+                    "40. 취약점이나 법률적 문제 발생 시, 모니터링 및 감사 데이터를 통해 즉각적인 소명과 대응 방안 제출이 가능합니까?"
+                ]
+            }
+        ];
+
+        const form = document.getElementById('quizForm');
+        const totalQuestions = 40;
+
+        function renderQuiz() {
+            let questionCounter = 1;
+
+            quizData.forEach((section, sIndex) => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'section-card';
+
+                const title = document.createElement('div');
+                title.className = 'section-title';
+                title.innerHTML = `<span>${section.title}</span>`;
+                sectionDiv.appendChild(title);
+
+                section.questions.forEach((qText) => {
+                    const qBlock = document.createElement('div');
+                    qBlock.className = 'question-block';
+
+                    const qDiv = document.createElement('div');
+                    qDiv.className = 'question-text';
+                    qDiv.textContent = qText;
+                    qBlock.appendChild(qDiv);
+
+                    const optsDiv = document.createElement('div');
+                    optsDiv.className = 'options-group';
+
+                    const options = [
+                        { val: 0, label: '없음 (0점)' },
+                        { val: 1, label: '낮음 (1점)' },
+                        { val: 2, label: '적정 (2점)' }
+                    ];
+
+                    options.forEach(opt => {
+                        const label = document.createElement('label');
+                        label.className = 'option-label';
+
+                        const input = document.createElement('input');
+                        input.type = 'radio';
+                        input.name = `q${questionCounter}`;
+                        input.value = opt.val;
+
+                        input.addEventListener('change', function () {
+                            const siblings = optsDiv.querySelectorAll('.option-label');
+                            siblings.forEach(sib => sib.classList.remove('selected'));
+                            if (this.checked) label.classList.add('selected');
+                            updateProgress();
+                        });
+
+                        const span = document.createElement('span');
+                        span.className = 'option-text';
+                        span.textContent = opt.label;
+
+                        label.appendChild(input);
+                        label.appendChild(span);
+                        optsDiv.appendChild(label);
+                    });
+
+                    qBlock.appendChild(optsDiv);
+                    sectionDiv.appendChild(qBlock);
+                    questionCounter++;
+                });
+
+                form.appendChild(sectionDiv);
+            });
+        }
+
+        function updateProgress() {
+            let answered = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                const rads = document.getElementsByName(`q${i}`);
+                for (let j = 0; j < rads.length; j++) {
+                    if (rads[j].checked) { answered++; break; }
+                }
+            }
+            const percent = (answered / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = percent + '%';
+        }
+
+        function calculateScore() {
+            let totalScore = 0;
+            let answered = 0;
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const rads = document.getElementsByName(`q${i}`);
+                let isChecked = false;
+                for (let j = 0; j < rads.length; j++) {
+                    if (rads[j].checked) {
+                        totalScore += parseInt(rads[j].value);
+                        isChecked = true;
+                        answered++;
+                        break;
+                    }
+                }
+            }
+
+            if (answered < totalQuestions) {
+                alert(`모든 문항에 응답해주셔야 정확한 결과가 나옵니다.\n현재 진행률: ${answered}/${totalQuestions}`);
+                // Keep going optionally or return
+            }
+
+            showResult(totalScore);
+        }
+
+        function showResult(score) {
+            let grade, msg, color;
+
+            if (score >= 64) {
+                grade = 'A (최우수)';
+                msg = '데이터 거버넌스 체계가 완숙 단계로 전사적으로 안정적 운영 중입니다.';
+                color = 'var(--primary)';
+            } else if (score >= 48) {
+                grade = 'B (우수)';
+                msg = '양호한 체계를 갖추었으나 특정 영역에 대한 개선 및 모니터링이 필요합니다.';
+                color = 'var(--secondary)';
+            } else if (score >= 32) {
+                grade = 'C (보통)';
+                msg = '기본적인 정책은 있으나 전사적 확산과 실질적 통제력이 부족하여 개선이 요구됩니다.';
+                color = 'var(--warning)';
+            } else {
+                grade = 'D (미흡)';
+                msg = '거버넌스 체계가 부재하거나 작동하지 않고 있습니다. 전면적인 체계 설계가 시급합니다.';
+                color = 'var(--error)';
+            }
+
+            document.getElementById('scoreVal').textContent = score;
+            document.getElementById('scoreCircle').style.borderColor = color;
+            document.getElementById('gradeLabel').textContent = `평가 등급: ${grade}`;
+            document.getElementById('gradeLabel').style.color = color;
+            document.getElementById('gradeMsg').textContent = msg;
+
+            document.getElementById('resultOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('resultOverlay').classList.remove('active');
+        }
+
+        // Initialize
+        window.onload = renderQuiz;
+    </script>
+</body>
+
+</html>
